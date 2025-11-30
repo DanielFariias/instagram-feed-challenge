@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button'
 
 export function App() {
   return (
@@ -10,12 +10,12 @@ export function App() {
 
         <Button
           onClick={() => {
-            console.log("Button clicked!");
+            console.log('Button clicked!')
           }}
         >
           Clique aqui
         </Button>
       </div>
     </div>
-  );
+  )
 }
