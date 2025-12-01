@@ -1,17 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen } from '@/tests/test-utils'
 import { App } from '.'
 
 describe('App', () => {
-  it('should render the app title', () => {
+  it('should render the app', () => {
     render(<App />)
 
     expect(screen.getByText(/instagram feed challenge/i)).toBeInTheDocument()
-  })
-
-  it('should render a button with the correct text', () => {
-    render(<App />)
-
-    expect(screen.getByRole('button', { name: /Clique aqui/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /clique aqui/i })).toBeInTheDocument()
   })
 })
