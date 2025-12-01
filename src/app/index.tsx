@@ -1,37 +1,24 @@
-import { Button } from '@/components/ui/button'
+import { PostList } from '@/components/post/post-list'
+import { ThemeToggle } from '@/components/theme-toggle'
 import { useThemeEffect } from '@/hooks/use-theme-effect'
-import { useQuery } from '@tanstack/react-query'
 
 export function App() {
   useThemeEffect()
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['test'],
-    queryFn: async () => {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      return { message: 'React Query está funcionando! 🚀' }
-    },
-  })
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto p-4 flex flex-col items-center">
-        <h1 className="text-4xl font-bold text-center py-8 text-gray-900 dark:text-white">
-          Instagram Feed Challenge
-        </h1>
-
-        <div className="p-4 bg-muted rounded-lg">
-          {isLoading ? <p>Carregando...</p> : <p className="font-medium">{data?.message}</p>}
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="sticky top-0 z-10 bg-background border-b">
+        <div className="container mx-auto px-4 h-16 flex items-center justify-between max-w-2xl">
+          <h1 className="text-xl font-bold">Instagram Feed</h1>
+          <ThemeToggle />
         </div>
+      </header>
 
-        <Button
-          onClick={() => {
-            console.log('Button clicked!')
-          }}
-        >
-          Clique aqui
-        </Button>
-      </div>
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-6 max-w-2xl">
+        <PostList />
+      </main>
     </div>
   )
 }
