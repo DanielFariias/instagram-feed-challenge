@@ -1,7 +1,10 @@
 import { Button } from '@/components/ui/button'
+import { useThemeEffect } from '@/hooks/use-theme-effect'
 import { useQuery } from '@tanstack/react-query'
 
 export function App() {
+  useThemeEffect()
+
   const { data, isLoading } = useQuery({
     queryKey: ['test'],
     queryFn: async () => {
