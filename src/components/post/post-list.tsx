@@ -26,7 +26,6 @@ export function PostList({ onPostClick }: PostListProps) {
 
   const { mutate: likePost, isPending: isLiking } = useLikePost()
 
-  // Intersection Observer para infinite scroll
   const loadMoreRef = useIntersectionObserver({
     onIntersect: () => {
       if (hasNextPage && !isFetchingNextPage) {
@@ -53,7 +52,6 @@ export function PostList({ onPostClick }: PostListProps) {
     [onPostClick, data]
   )
 
-  // Loading inicial
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -64,7 +62,6 @@ export function PostList({ onPostClick }: PostListProps) {
     )
   }
 
-  // Error state
   if (isError) {
     return (
       <div className="flex flex-col items-center justify-center py-12 gap-4">
@@ -79,7 +76,6 @@ export function PostList({ onPostClick }: PostListProps) {
     )
   }
 
-  // Empty state
   if (!data?.posts || data.posts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
@@ -100,7 +96,6 @@ export function PostList({ onPostClick }: PostListProps) {
         />
       ))}
 
-      {/* Infinite scroll trigger */}
       {hasNextPage && (
         <div ref={loadMoreRef} className="flex justify-center py-8">
           {isFetchingNextPage && (
@@ -112,7 +107,6 @@ export function PostList({ onPostClick }: PostListProps) {
         </div>
       )}
 
-      {/* End of feed */}
       {!hasNextPage && data.posts.length > 0 && (
         <div className="text-center py-8 text-muted-foreground">Você viu todos os posts! 🎉</div>
       )}

@@ -22,7 +22,7 @@ export function generateMockComments(postId: string, count: number = 5): Comment
       postId,
       user: getRandomUser(),
       content: commentTexts[Math.floor(Math.random() * commentTexts.length)],
-      createdAt: Date.now() - i * 600000, // 10 minutos de diferença
+      createdAt: Date.now() - i * 600000,
       likes: Math.floor(Math.random() * 50),
     })
   }

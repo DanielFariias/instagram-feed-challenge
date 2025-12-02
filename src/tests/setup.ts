@@ -6,7 +6,6 @@ afterEach(() => {
   cleanup()
 })
 
-// Mock do matchMedia (usado pelo theme)
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation(query => ({
@@ -21,7 +20,6 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 })
 
-// Mock do IntersectionObserver (usado pelo infinite scroll)
 class IntersectionObserverMock {
   observe = vi.fn()
   unobserve = vi.fn()

@@ -4,7 +4,7 @@ import { mockUsers, getRandomUser } from './users'
 export const mockPosts: Post[] = Array.from({ length: 30 }, (_, index) => {
   const user = index < 5 ? mockUsers[index] : getRandomUser()
   const postId = `post-${index + 1}`
-  const createdAt = Date.now() - index * 3600000 // 1 hora de diferença
+  const createdAt = Date.now() - index * 3600000
 
   return {
     id: postId,

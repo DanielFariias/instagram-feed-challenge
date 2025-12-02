@@ -1,4 +1,3 @@
-// Helper to manage likes in localStorage per user
 const getLikesKey = (username: string) => `instagram-feed-likes-${username}`
 
 export const getUserLikes = (username: string): Set<string> => {

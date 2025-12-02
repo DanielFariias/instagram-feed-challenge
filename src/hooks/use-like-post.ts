@@ -11,22 +11,18 @@ export function useLikePost() {
 
   return useMutation({
     mutationFn: (request: { postId: string }) => {
-      // Toggle like in localStorage
-      if (user) {
-        toggleUserLike(user.username, request.postId)
-      }
       return toggleLikePost(request)
     },
 
-    // Optimistic update
     onMutate: async ({ postId }) => {
-      // Cancela queries em andamento
+      if (user) {
+        await toggleUserLike(user.username, postId)
+      }
+
       await queryClient.cancelQueries({ queryKey: ['posts'] })
 
-      // Salva snapshot do estado anterior
       const previousData = queryClient.getQueryData(['posts'])
 
-      // Atualiza otimisticamente
       queryClient.setQueriesData<{
         pages: PaginatedResponse<Post>[]
         pageParams: number[]
@@ -50,17 +46,19 @@ export function useLikePost() {
         }
       })
 
-      return { previousData }
+      return { previousData, postId }
     },
 
-    // Rollback em caso de erro
     onError: (_error, _variables, context) => {
+      if (user && context?.postId) {
+        toggleUserLike(user.username, context.postId)
+      }
+
       if (context?.previousData) {
         queryClient.setQueryData(['posts'], context.previousData)
       }
     },
 
-    // Sempre refetch após sucesso ou erro
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] })
     },

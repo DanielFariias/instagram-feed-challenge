@@ -16,17 +16,13 @@ export function useAddComment() {
       })
     },
 
-    // Optimistic update
     onMutate: async newComment => {
       const { postId, content } = newComment
 
-      // Cancela queries em andamento
       await queryClient.cancelQueries({ queryKey: ['post-comments', postId] })
 
-      // Salva snapshot anterior
       const previousComments = queryClient.getQueryData<Comment[]>(['post-comments', postId])
 
-      // Cria comentário temporário com dados do usuário logado
       const optimisticComment: Comment = {
         id: `temp-${Date.now()}`,
         postId,
@@ -41,7 +37,6 @@ export function useAddComment() {
         },
       }
 
-      // Atualiza otimisticamente
       queryClient.setQueryData<Comment[]>(['post-comments', postId], old => {
         return old ? [...old, optimisticComment] : [optimisticComment]
       })
@@ -49,17 +44,14 @@ export function useAddComment() {
       return { previousComments, postId }
     },
 
-    // Rollback em caso de erro
     onError: (_error, _variables, context) => {
       if (context?.previousComments) {
         queryClient.setQueryData(['post-comments', context.postId], context.previousComments)
       }
     },
 
-    // Refetch após sucesso
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['post-comments', variables.postId] })
-      // Também invalida a lista de posts para atualizar a contagem
       queryClient.invalidateQueries({ queryKey: ['posts'] })
     },
   })

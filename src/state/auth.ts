@@ -13,7 +13,6 @@ interface AuthState {
   isAuthenticated: boolean
 }
 
-// Helper to generate random avatar
 const generateAvatar = (username: string): string => {
   const avatars = [
     'https://api.dicebear.com/7.x/avataaars/svg?seed=',

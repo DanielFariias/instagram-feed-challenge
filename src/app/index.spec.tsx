@@ -19,7 +19,6 @@ describe('App', () => {
   it('should render post list', async () => {
     render(<App />)
 
-    // Espera os posts carregarem
     await waitFor(
       () => {
         const posts = screen.getAllByText(/curtida/)

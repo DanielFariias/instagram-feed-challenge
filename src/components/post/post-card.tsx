@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import { usePostTracking } from '@/hooks/use-post-tracking'
 import { useAuth } from '@/state/auth'
 import { isPostLikedByUser } from '@/utils/likes-storage'
+import { sleep } from '@/utils/sleep'
 
 interface PostCardProps {
   post: Post
@@ -27,11 +28,18 @@ export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
 
   const [isLiked, setIsLiked] = useState(initialLiked)
 
-  const handleLike = () => {
-    if (user) {
-      setIsLiked(!isLiked)
+  const handleLike = async () => {
+    try {
+      onLike?.(post.id)
+
+      if (user) {
+        await sleep(500)
+
+        setIsLiked(user ? isPostLikedByUser(user.username, post.id) : false)
+      }
+    } catch (error) {
+      console.error('Error liking post:', error)
     }
-    onLike?.(post.id)
   }
 
   const handleComment = () => {
@@ -40,7 +48,6 @@ export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
 
   return (
     <Card ref={trackingRef} className="w-full max-w-md mx-auto">
-      {/* Header */}
       <CardHeader className="flex flex-row items-center gap-3 p-4">
         <Avatar>
           <AvatarImage src={post.user.avatar} alt={post.user.username} />
@@ -59,7 +66,6 @@ export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
         </div>
       </CardHeader>
 
-      {/* Image */}
       <CardContent className="p-0">
         <img
           src={post.imageUrl}
@@ -69,7 +75,6 @@ export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
         />
       </CardContent>
 
-      {/* Actions */}
       <CardFooter className="flex flex-col items-start gap-3 p-4">
         <div className="flex items-center gap-4 w-full">
           <Button
@@ -100,12 +105,10 @@ export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
           </Button>
         </div>
 
-        {/* Likes */}
         <div className="text-sm font-semibold">
           {formatNumber(post.likes)} curtida{post.likes !== 1 ? 's' : ''}
         </div>
 
-        {/* Caption */}
         {post.caption && (
           <div className="text-sm">
             <span className="font-semibold mr-2">{post.user.username}</span>
@@ -113,7 +116,6 @@ export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
           </div>
         )}
 
-        {/* Comments count */}
         {post.commentsCount > 0 && (
           <button
             onClick={handleComment}

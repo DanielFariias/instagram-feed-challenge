@@ -7,7 +7,6 @@ import {
 } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-// Cria um QueryClient para testes (sem retry e sem logs)
 function createTestQueryClient() {
   return new QueryClient({
     defaultOptions: {
@@ -48,8 +47,6 @@ function customRenderHook<Result, Props>(
   return renderHook(hook, { wrapper: AllTheProviders, ...options })
 }
 
-// Re-exporta tudo do testing-library
 export * from '@testing-library/react'
 
-// Sobrescreve o render e renderHook
 export { customRender as render, customRenderHook as renderHook }

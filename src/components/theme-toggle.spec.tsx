@@ -17,10 +17,8 @@ describe('ThemeToggle', () => {
 
     const button = screen.getByRole('button', { name: /alternar tema/i })
 
-    // Clica no botão
     await user.click(button)
 
-    // O tema deve ter mudado (verificado pelo Zustand)
     expect(button).toBeInTheDocument()
   })
 })

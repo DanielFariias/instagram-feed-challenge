@@ -25,11 +25,9 @@ export function usePostTracking({
         const [entry] = entries
 
         if (entry.isIntersecting) {
-          // Post entrou na tela
           markAsViewed(postId)
           startTracking(postId)
         } else {
-          // Post saiu da tela
           stopTracking()
         }
       },

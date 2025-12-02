@@ -24,7 +24,6 @@ interface PostDetailsModalProps {
 export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalProps) {
   const queryClient = useQueryClient()
 
-  // Busca o post atualizado do cache do React Query
   const currentPost = useMemo(() => {
     if (!post) return null
 
@@ -35,7 +34,6 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
 
     if (!cachedData) return post
 
-    // Procura o post atualizado no cache
     for (const page of cachedData.pages) {
       const updatedPost = page.data.find(p => p.id === post.id)
       if (updatedPost) return updatedPost
@@ -65,7 +63,6 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[95vh] p-0 flex flex-col">
-        {/* ===== SEÇÃO 1: IMAGEM ===== */}
         <div className="w-full bg-black shrink-0 rounded-t-lg">
           <img
             src={currentPost.imageUrl}
@@ -74,7 +71,6 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
           />
         </div>
 
-        {/* ===== SEÇÃO 2: HEADER COM USUÁRIO ===== */}
         <div className="flex items-center gap-3 p-4 border-b shrink-0">
           {currentPost.caption && (
             <div className="flex gap-3 w-full">
@@ -90,23 +86,19 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
           )}
         </div>
 
-        {/* ===== SEÇÃO 3: COMENTÁRIOS (SCROLL) ===== */}
         <div className="flex-1 overflow-y-auto px-4 py-2 min-h-0">
-          {/* Loading State */}
           {isLoadingComments && (
             <div className="flex justify-center py-12">
               <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
             </div>
           )}
 
-          {/* Empty State */}
           {!isLoadingComments && (!comments || comments.length === 0) && (
             <div className="text-center py-12 text-sm text-muted-foreground">
               Nenhum comentário ainda. Seja o primeiro!
             </div>
           )}
 
-          {/* Comments List */}
           {!isLoadingComments && comments && comments.length > 0 && (
             <div className="py-2 space-y-1">
               {comments.map(comment => (
@@ -116,10 +108,8 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
           )}
         </div>
 
-        {/* ===== SEÇÃO 4: AÇÕES (LIKE, COMMENT, SAVE) ===== */}
         <div className="shrink-0 border-t bg-background rounded-b-lg">
           <div className="p-4 space-y-3">
-            {/* Action Buttons */}
             <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
@@ -143,14 +133,12 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
               <Bookmark className="w-6 h-6" />
             </div>
 
-            {/* Likes Count */}
             <p className="text-sm font-semibold">
               {formatNumber(currentPost.likes)} curtida{currentPost.likes !== 1 ? 's' : ''}
             </p>
 
             <Separator />
 
-            {/* Add Comment Form */}
             <AddCommentForm onSubmit={handleAddComment} isPending={isAddingComment} />
           </div>
         </div>

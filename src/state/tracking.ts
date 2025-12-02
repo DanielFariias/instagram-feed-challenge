@@ -4,33 +4,25 @@ import { persist } from 'zustand/middleware'
 interface PostView {
   postId: string
   viewedAt: number
-  viewDuration: number // em segundos
+  viewDuration: number
 }
 
 interface TrackingState {
-  // Posts vistos
   viewedPosts: Record<string, PostView>
 
-  // Post atualmente sendo visualizado
   activePostId: string | null
   startTime: number | null
 
-  // Marcar post como visto
   markAsViewed: (postId: string) => void
 
-  // Iniciar tracking de tempo
   startTracking: (postId: string) => void
 
-  // Parar tracking e salvar tempo
   stopTracking: () => void
 
-  // Verificar se post foi visto
   isPostViewed: (postId: string) => boolean
 
-  // Obter duração de visualização
   getViewDuration: (postId: string) => number
 
-  // Obter todos os posts vistos
   getViewedPosts: () => PostView[]
 }
 
@@ -44,7 +36,6 @@ export const useTracking = create<TrackingState>()(
       markAsViewed: (postId: string) => {
         const { viewedPosts } = get()
 
-        // Só marca se ainda não foi visto
         if (!viewedPosts[postId]) {
           set({
             viewedPosts: {
@@ -62,7 +53,6 @@ export const useTracking = create<TrackingState>()(
       startTracking: (postId: string) => {
         const { activePostId, stopTracking } = get()
 
-        // Se já estava trackando outro post, para o anterior
         if (activePostId && activePostId !== postId) {
           stopTracking()
         }

@@ -4,7 +4,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 export function PostCardSkeleton() {
   return (
     <Card className="w-full max-w-md mx-auto">
-      {/* Header */}
       <CardHeader className="flex flex-row items-center gap-3 p-4">
         <Skeleton className="w-10 h-10 rounded-full" />
         <div className="flex-1 space-y-2">
@@ -13,12 +12,10 @@ export function PostCardSkeleton() {
         </div>
       </CardHeader>
 
-      {/* Image */}
       <CardContent className="p-0">
         <Skeleton className="w-full aspect-square" />
       </CardContent>
 
-      {/* Actions */}
       <CardFooter className="flex flex-col items-start gap-3 p-4">
         <div className="flex items-center gap-4 w-full">
           <Skeleton className="w-6 h-6" />

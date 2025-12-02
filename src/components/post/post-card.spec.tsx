@@ -1,8 +1,10 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen } from '@/tests/test-utils'
 import { PostCard } from './post-card'
 import type { Post } from '@/types/post'
 import userEvent from '@testing-library/user-event'
+import { useAuth } from '@/state/auth'
+import { toggleUserLike } from '@/utils/likes-storage'
 
 const mockPost: Post = {
   id: '1',
@@ -23,10 +25,17 @@ const mockPost: Post = {
 }
 
 describe('PostCard', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  afterEach(() => {
+    useAuth.getState().logout()
+  })
+
   it('should render post information correctly', () => {
     render(<PostCard post={mockPost} />)
 
-    // Username aparece 2 vezes (header e caption), então usa getAllByText
     const usernames = screen.getAllByText('testuser')
     expect(usernames).toHaveLength(2)
 
@@ -38,7 +47,6 @@ describe('PostCard', () => {
   it('should show verified badge for verified users', () => {
     render(<PostCard post={mockPost} />)
 
-    // Verifica se o SVG do badge verificado existe
     const verifiedBadge = document.querySelector('.text-blue-500')
     expect(verifiedBadge).toBeInTheDocument()
   })
@@ -66,10 +74,13 @@ describe('PostCard', () => {
   })
 
   it('should show liked state correctly', () => {
+    useAuth.getState().login('testuser')
+
+    toggleUserLike('testuser', '1')
+
     const likedPost = { ...mockPost, isLiked: true }
     render(<PostCard post={likedPost} />)
 
-    // Verifica se o ícone de coração está preenchido (classe fill-red-500)
     const heartIcon = screen.getAllByRole('button')[0].querySelector('svg')
     expect(heartIcon).toHaveClass('fill-red-500')
   })

@@ -34,12 +34,10 @@ export function App() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      {/* Main Content */}
       <main className="container mx-auto px-4 py-6 max-w-2xl">
         <PostList onPostClick={handlePostClick} />
       </main>
 
-      {/* Post Details Modal */}
       <PostDetailsModal post={selectedPost} open={isModalOpen} onOpenChange={handleModalClose} />
     </div>
   )
