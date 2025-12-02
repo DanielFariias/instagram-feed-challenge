@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { formatRelativeTime, formatNumber } from '@/utils/format-date'
 import type { Post } from '@/types/post'
 import { cn } from '@/lib/utils'
+import { usePostTracking } from '@/hooks/use-post-tracking'
 
 interface PostCardProps {
   post: Post
@@ -14,6 +15,8 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
+  const trackingRef = usePostTracking({ postId: post.id })
+
   const handleLike = () => {
     onLike?.(post.id)
   }
@@ -23,7 +26,7 @@ export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card ref={trackingRef} className="w-full max-w-md mx-auto">
       {/* Header */}
       <CardHeader className="flex flex-row items-center gap-3 p-4">
         <Avatar>
