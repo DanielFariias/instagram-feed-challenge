@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import { Heart, MessageCircle, Bookmark } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
@@ -6,6 +7,8 @@ import { formatRelativeTime, formatNumber } from '@/utils/format-date'
 import type { Post } from '@/types/post'
 import { cn } from '@/lib/utils'
 import { usePostTracking } from '@/hooks/use-post-tracking'
+import { useAuth } from '@/state/auth'
+import { isPostLikedByUser } from '@/utils/likes-storage'
 
 interface PostCardProps {
   post: Post
@@ -16,8 +19,18 @@ interface PostCardProps {
 
 export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
   const trackingRef = usePostTracking({ postId: post.id })
+  const { user } = useAuth()
+
+  const initialLiked = useMemo(() => {
+    return user ? isPostLikedByUser(user.username, post.id) : false
+  }, [user, post.id])
+
+  const [isLiked, setIsLiked] = useState(initialLiked)
 
   const handleLike = () => {
+    if (user) {
+      setIsLiked(!isLiked)
+    }
     onLike?.(post.id)
   }
 
@@ -69,7 +82,7 @@ export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
             <Heart
               className={cn(
                 'w-6 h-6 transition-colors',
-                post.isLiked ? 'fill-red-500 text-red-500' : 'text-foreground hover:text-gray-500'
+                isLiked ? 'fill-red-500 text-red-500' : 'text-foreground hover:text-gray-500'
               )}
             />
           </Button>

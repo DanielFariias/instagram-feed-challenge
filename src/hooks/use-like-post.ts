@@ -1,13 +1,22 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toggleLikePost } from '@/services/feed-service'
+import { toggleUserLike } from '@/utils/likes-storage'
+import { useAuth } from '@/state/auth'
 import type { Post } from '@/types/post'
 import type { PaginatedResponse } from '@/types/api-response'
 
 export function useLikePost() {
   const queryClient = useQueryClient()
+  const { user } = useAuth()
 
   return useMutation({
-    mutationFn: toggleLikePost,
+    mutationFn: (request: { postId: string }) => {
+      // Toggle like in localStorage
+      if (user) {
+        toggleUserLike(user.username, request.postId)
+      }
+      return toggleLikePost(request)
+    },
 
     // Optimistic update
     onMutate: async ({ postId }) => {

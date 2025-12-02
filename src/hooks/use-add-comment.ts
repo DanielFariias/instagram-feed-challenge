@@ -1,12 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { addComment } from '@/services/feed-service'
+import { useAuth } from '@/state/auth'
 import type { Comment } from '@/types/comment'
 
 export function useAddComment() {
   const queryClient = useQueryClient()
+  const { user } = useAuth()
 
   return useMutation({
-    mutationFn: addComment,
+    mutationFn: (request: { postId: string; content: string }) => {
+      return addComment({
+        ...request,
+        username: user?.username,
+        avatar: user?.avatar,
+      })
+    },
 
     // Optimistic update
     onMutate: async newComment => {
@@ -18,7 +26,7 @@ export function useAddComment() {
       // Salva snapshot anterior
       const previousComments = queryClient.getQueryData<Comment[]>(['post-comments', postId])
 
-      // Cria comentário temporário
+      // Cria comentário temporário com dados do usuário logado
       const optimisticComment: Comment = {
         id: `temp-${Date.now()}`,
         postId,
@@ -26,10 +34,10 @@ export function useAddComment() {
         createdAt: Date.now(),
         likes: 0,
         user: {
-          id: 'current-user',
-          username: 'you',
-          fullName: 'You',
-          avatar: 'https://i.pravatar.cc/150?img=68',
+          id: user?.username || 'current-user',
+          username: user?.username || 'you',
+          fullName: user?.username || 'You',
+          avatar: user?.avatar || 'https://i.pravatar.cc/150?img=68',
         },
       }
 
