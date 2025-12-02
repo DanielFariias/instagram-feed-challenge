@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Heart, MessageCircle, Bookmark } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils'
 import { usePostTracking } from '@/hooks/use-post-tracking'
 import { useAuth } from '@/state/auth'
 import { isPostLikedByUser } from '@/utils/likes-storage'
-import { sleep } from '@/utils/sleep'
 
 interface PostCardProps {
   post: Post
@@ -22,24 +21,15 @@ export function PostCard({ post, onLike, onComment, isLiking }: PostCardProps) {
   const trackingRef = usePostTracking({ postId: post.id })
   const { user } = useAuth()
 
-  const initialLiked = useMemo(() => {
-    return user ? isPostLikedByUser(user.username, post.id) : false
-  }, [user, post.id])
-
-  const [isLiked, setIsLiked] = useState(initialLiked)
-
-  const handleLike = async () => {
-    try {
-      onLike?.(post.id)
-
-      if (user) {
-        await sleep(500)
-
-        setIsLiked(user ? isPostLikedByUser(user.username, post.id) : false)
-      }
-    } catch (error) {
-      console.error('Error liking post:', error)
+  const isLiked = useMemo(() => {
+    if (typeof post.isLiked === 'boolean') {
+      return post.isLiked
     }
+    return user ? isPostLikedByUser(user.username, post.id) : false
+  }, [post.isLiked, user, post.id])
+
+  const handleLike = () => {
+    onLike?.(post.id)
   }
 
   const handleComment = () => {

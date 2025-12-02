@@ -3,15 +3,16 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { CommentItem } from './comment-item'
 import { AddCommentForm } from './add-comment-form'
 import { formatNumber } from '@/utils/format-date'
 import { cn } from '@/lib/utils'
 import { usePostComments } from '@/hooks/use-post-comments'
 import { useAddComment } from '@/hooks/use-add-comment'
-import { useLikePost } from '@/hooks/use-like-post'
 import { useMemo } from 'react'
+import { useAuth } from '@/state/auth'
+import { isPostLikedByUser } from '@/utils/likes-storage'
 import type { PaginatedResponse } from '@/types/api-response'
 import type { Post } from '@/types/post'
 
@@ -22,25 +23,39 @@ interface PostDetailsModalProps {
 }
 
 export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalProps) {
-  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  const { data: postsData } = useQuery<{
+    pages: PaginatedResponse<Post>[]
+    pageParams: number[]
+  }>({
+    queryKey: ['posts'],
+    enabled: false,
+    initialData: undefined,
+  })
 
   const currentPost = useMemo(() => {
     if (!post) return null
 
-    const cachedData = queryClient.getQueryData<{
-      pages: PaginatedResponse<Post>[]
-      pageParams: number[]
-    }>(['posts'])
-
-    if (!cachedData) return post
-
-    for (const page of cachedData.pages) {
-      const updatedPost = page.data.find(p => p.id === post.id)
-      if (updatedPost) return updatedPost
+    // Procurar o post atualizado nos dados em cache
+    if (postsData?.pages) {
+      for (const page of postsData.pages) {
+        const updatedPost = page.data.find(p => p.id === post.id)
+        if (updatedPost) return updatedPost
+      }
     }
 
     return post
-  }, [post, queryClient])
+  }, [post, postsData])
+
+  const isLiked = useMemo(() => {
+    if (!currentPost) return false
+
+    if (typeof currentPost.isLiked === 'boolean') {
+      return currentPost.isLiked
+    }
+    return user ? isPostLikedByUser(user.username, currentPost.id) : false
+  }, [currentPost?.isLiked, user, currentPost?.id])
 
   const { data: comments, isLoading: isLoadingComments } = usePostComments(
     currentPost?.id || '',
@@ -48,16 +63,11 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
   )
 
   const { mutate: addComment, isPending: isAddingComment } = useAddComment()
-  const { mutate: likePost, isPending: isLiking } = useLikePost()
 
   if (!currentPost) return null
 
   const handleAddComment = (content: string) => {
     addComment({ postId: currentPost.id, content })
-  }
-
-  const handleLike = () => {
-    likePost({ postId: currentPost.id })
   }
 
   return (
@@ -111,26 +121,24 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
         <div className="shrink-0 border-t bg-background rounded-b-lg">
           <div className="p-4 space-y-3">
             <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLike}
-                disabled={isLiking}
-                className="hover:bg-transparent p-0 h-auto"
-              >
+              <Button variant="ghost" size="icon" className="hover:bg-transparent">
                 <Heart
                   className={cn(
-                    'w-6 h-6 transition-all',
-                    currentPost.isLiked ? 'fill-red-500 text-red-500' : 'hover:text-gray-500'
+                    'w-6 h-6 transition-colors',
+                    isLiked ? 'fill-red-500 text-red-500' : 'text-foreground hover:text-gray-500'
                   )}
                 />
               </Button>
 
-              <MessageCircle className="w-6 h-6" />
+              <Button variant="ghost" size="icon" className="hover:bg-transparent">
+                <MessageCircle className="w-6 h-6" />
+              </Button>
 
               <div className="flex-1" />
 
-              <Bookmark className="w-6 h-6" />
+              <Button variant="ghost" size="icon" className="hover:bg-transparent">
+                <Bookmark className="w-6 h-6" />
+              </Button>
             </div>
 
             <p className="text-sm font-semibold">

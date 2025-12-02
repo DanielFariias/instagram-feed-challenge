@@ -27,7 +27,7 @@ describe('PostList', () => {
 
     await waitFor(
       () => {
-        const likeTexts = screen.getAllByText(/curtida/)
+        const likeTexts = screen.getAllByText(/curtidas?/)
         expect(likeTexts.length).toBeGreaterThanOrEqual(3)
       },
       { timeout: 3000 }

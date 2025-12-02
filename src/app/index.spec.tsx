@@ -1,8 +1,17 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { render, screen, waitFor } from '@/tests/test-utils'
 import { App } from '.'
+import { useAuth } from '@/state/auth'
 
 describe('App', () => {
+  beforeEach(() => {
+    useAuth.getState().login('testuser')
+  })
+
+  afterEach(() => {
+    useAuth.getState().logout()
+  })
+
   it('should render the app header', () => {
     render(<App />)
 
@@ -21,7 +30,7 @@ describe('App', () => {
 
     await waitFor(
       () => {
-        const posts = screen.getAllByText(/curtida/)
+        const posts = screen.getAllByText(/curtidas?/)
         expect(posts.length).toBeGreaterThan(0)
       },
       { timeout: 3000 }

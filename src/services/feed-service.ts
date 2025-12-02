@@ -1,4 +1,7 @@
-import { simulateDelay, shouldSimulateError, createSimulatedError } from './api-simulator'
+import {
+  simulateDelay,
+  // shouldSimulateError, createSimulatedError,
+} from './api-simulator'
 
 import { mockPosts } from '@/mocks/posts'
 import { getRandomUser } from '@/mocks/users'
@@ -16,9 +19,9 @@ export async function getPosts(request: GetPostsRequest = {}): Promise<Paginated
 
   await simulateDelay(800)
 
-  if (shouldSimulateError(0.1)) {
-    throw createSimulatedError()
-  }
+  // if (shouldSimulateError(0.1)) {
+  //   throw createSimulatedError()
+  // }
 
   const startIndex = (page - 1) * pageSize
   const endIndex = startIndex + pageSize
@@ -36,9 +39,9 @@ export async function getPosts(request: GetPostsRequest = {}): Promise<Paginated
 export async function getPostById(postId: string): Promise<Post | null> {
   await simulateDelay(500)
 
-  if (shouldSimulateError(0.1)) {
-    throw createSimulatedError()
-  }
+  // if (shouldSimulateError(0.1)) {
+  //   throw createSimulatedError()
+  // }
 
   const post = postsDatabase.find(p => p.id === postId)
   return post || null
@@ -49,9 +52,9 @@ export async function toggleLikePost(request: LikePostRequest): Promise<Post> {
 
   await simulateDelay(300)
 
-  if (shouldSimulateError(0.15)) {
-    throw createSimulatedError('Falha ao curtir o post')
-  }
+  // if (shouldSimulateError(0.15)) {
+  //   throw createSimulatedError('Falha ao curtir o post')
+  // }
 
   const postIndex = postsDatabase.findIndex(p => p.id === postId)
 
@@ -75,9 +78,9 @@ export async function toggleLikePost(request: LikePostRequest): Promise<Post> {
 export async function getPostComments(postId: string): Promise<Comment[]> {
   await simulateDelay(600)
 
-  if (shouldSimulateError(0.1)) {
-    throw createSimulatedError()
-  }
+  // if (shouldSimulateError(0.1)) {
+  //   throw createSimulatedError()
+  // }
 
   const commentsKey = `instagram-feed-comments-${postId}`
   const stored = localStorage.getItem(commentsKey)
@@ -100,9 +103,9 @@ export async function addComment(request: AddCommentRequest): Promise<Comment> {
 
   await simulateDelay(500)
 
-  if (shouldSimulateError(0.15)) {
-    throw createSimulatedError('Falha ao adicionar comentário')
-  }
+  // if (shouldSimulateError(0.15)) {
+  //   throw createSimulatedError('Falha ao adicionar comentário')
+  // }
 
   const newComment: Comment = {
     id: `comment-${postId}-${Date.now()}`,
