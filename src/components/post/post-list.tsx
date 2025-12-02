@@ -3,12 +3,13 @@ import { PostCard } from './post-card'
 import { PostCardSkeleton } from './post-card-skeleton'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, Loader2 } from 'lucide-react'
+import type { Post } from '@/types/post'
 import { usePosts } from '@/hooks/use-posts'
 import { useLikePost } from '@/hooks/use-like-post'
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer'
 
 interface PostListProps {
-  onPostClick?: (postId: string) => void
+  onPostClick?: (post: Post) => void
 }
 
 export function PostList({ onPostClick }: PostListProps) {
@@ -44,9 +45,12 @@ export function PostList({ onPostClick }: PostListProps) {
 
   const handleComment = useCallback(
     (postId: string) => {
-      onPostClick?.(postId)
+      const post = data?.posts.find(p => p.id === postId)
+      if (post) {
+        onPostClick?.(post)
+      }
     },
-    [onPostClick]
+    [onPostClick, data]
   )
 
   // Loading inicial

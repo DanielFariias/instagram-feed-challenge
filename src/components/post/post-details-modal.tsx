@@ -1,0 +1,160 @@
+import { Heart, MessageCircle, Bookmark, Loader2 } from 'lucide-react'
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { useQueryClient } from '@tanstack/react-query'
+import { CommentItem } from './comment-item'
+import { AddCommentForm } from './add-comment-form'
+import { formatNumber } from '@/utils/format-date'
+import { cn } from '@/lib/utils'
+import { usePostComments } from '@/hooks/use-post-comments'
+import { useAddComment } from '@/hooks/use-add-comment'
+import { useLikePost } from '@/hooks/use-like-post'
+import { useMemo } from 'react'
+import type { PaginatedResponse } from '@/types/api-response'
+import type { Post } from '@/types/post'
+
+interface PostDetailsModalProps {
+  post: Post | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalProps) {
+  const queryClient = useQueryClient()
+
+  // Busca o post atualizado do cache do React Query
+  const currentPost = useMemo(() => {
+    if (!post) return null
+
+    const cachedData = queryClient.getQueryData<{
+      pages: PaginatedResponse<Post>[]
+      pageParams: number[]
+    }>(['posts'])
+
+    if (!cachedData) return post
+
+    // Procura o post atualizado no cache
+    for (const page of cachedData.pages) {
+      const updatedPost = page.data.find(p => p.id === post.id)
+      if (updatedPost) return updatedPost
+    }
+
+    return post
+  }, [post, queryClient])
+
+  const { data: comments, isLoading: isLoadingComments } = usePostComments(
+    currentPost?.id || '',
+    open && !!currentPost
+  )
+
+  const { mutate: addComment, isPending: isAddingComment } = useAddComment()
+  const { mutate: likePost, isPending: isLiking } = useLikePost()
+
+  if (!currentPost) return null
+
+  const handleAddComment = (content: string) => {
+    addComment({ postId: currentPost.id, content })
+  }
+
+  const handleLike = () => {
+    likePost({ postId: currentPost.id })
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[95vh] p-0 flex flex-col">
+        {/* ===== SEÇÃO 1: IMAGEM ===== */}
+        <div className="w-full bg-black shrink-0 rounded-t-lg">
+          <img
+            src={currentPost.imageUrl}
+            alt={currentPost.caption}
+            className="w-full max-h-[50vh] object-contain rounded-lg"
+          />
+        </div>
+
+        {/* ===== SEÇÃO 2: HEADER COM USUÁRIO ===== */}
+        <div className="flex items-center gap-3 p-4 border-b shrink-0">
+          {currentPost.caption && (
+            <div className="flex gap-3 w-full">
+              <Avatar className="w-8 h-8 shrink-0">
+                <AvatarImage src={currentPost.user.avatar} alt={currentPost.user.username} />
+                <AvatarFallback>{currentPost.user.username[0].toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <span className="text-sm font-semibold">{currentPost.user.username}</span>
+                <span className="text-sm ml-2">{currentPost.caption}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ===== SEÇÃO 3: COMENTÁRIOS (SCROLL) ===== */}
+        <div className="flex-1 overflow-y-auto px-4 py-2 min-h-0">
+          {/* Loading State */}
+          {isLoadingComments && (
+            <div className="flex justify-center py-12">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!isLoadingComments && (!comments || comments.length === 0) && (
+            <div className="text-center py-12 text-sm text-muted-foreground">
+              Nenhum comentário ainda. Seja o primeiro!
+            </div>
+          )}
+
+          {/* Comments List */}
+          {!isLoadingComments && comments && comments.length > 0 && (
+            <div className="py-2 space-y-1">
+              {comments.map(comment => (
+                <CommentItem key={comment.id} comment={comment} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ===== SEÇÃO 4: AÇÕES (LIKE, COMMENT, SAVE) ===== */}
+        <div className="shrink-0 border-t bg-background rounded-b-lg">
+          <div className="p-4 space-y-3">
+            {/* Action Buttons */}
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleLike}
+                disabled={isLiking}
+                className="hover:bg-transparent p-0 h-auto"
+              >
+                <Heart
+                  className={cn(
+                    'w-6 h-6 transition-all',
+                    currentPost.isLiked ? 'fill-red-500 text-red-500' : 'hover:text-gray-500'
+                  )}
+                />
+              </Button>
+
+              <MessageCircle className="w-6 h-6" />
+
+              <div className="flex-1" />
+
+              <Bookmark className="w-6 h-6" />
+            </div>
+
+            {/* Likes Count */}
+            <p className="text-sm font-semibold">
+              {formatNumber(currentPost.likes)} curtida{currentPost.likes !== 1 ? 's' : ''}
+            </p>
+
+            <Separator />
+
+            {/* Add Comment Form */}
+            <AddCommentForm onSubmit={handleAddComment} isPending={isAddingComment} />
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
