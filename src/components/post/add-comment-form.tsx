@@ -26,7 +26,7 @@ export function AddCommentForm({ onSubmit, isPending }: AddCommentFormProps) {
         value={content}
         onChange={e => setContent(e.target.value)}
         disabled={isPending}
-        className="resize-none min-h-[60px]"
+        className="resize-none min-h-5"
         maxLength={500}
         onKeyDown={e => {
           if (e.key === 'Enter' && !e.shiftKey) {

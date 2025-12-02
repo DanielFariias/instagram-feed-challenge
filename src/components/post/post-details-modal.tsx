@@ -1,8 +1,7 @@
-import { Heart, MessageCircle, Bookmark, Loader2 } from 'lucide-react'
+import { Heart, Bookmark, Loader2 } from 'lucide-react'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
 import { useQuery } from '@tanstack/react-query'
 import { CommentItem } from './comment-item'
 import { AddCommentForm } from './add-comment-form'
@@ -110,11 +109,11 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
           )}
 
           {!isLoadingComments && comments && comments.length > 0 && (
-            <div className="py-2 space-y-1">
+            <>
               {comments.map(comment => (
                 <CommentItem key={comment.id} comment={comment} />
               ))}
-            </div>
+            </>
           )}
         </div>
 
@@ -130,9 +129,9 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
                 />
               </Button>
 
-              <Button variant="ghost" size="icon" className="hover:bg-transparent">
-                <MessageCircle className="w-6 h-6" />
-              </Button>
+              <p className="text-sm font-semibold">
+                {formatNumber(currentPost.likes)} curtida{currentPost.likes !== 1 ? 's' : ''}
+              </p>
 
               <div className="flex-1" />
 
@@ -140,12 +139,6 @@ export function PostDetailsModal({ post, open, onOpenChange }: PostDetailsModalP
                 <Bookmark className="w-6 h-6" />
               </Button>
             </div>
-
-            <p className="text-sm font-semibold">
-              {formatNumber(currentPost.likes)} curtida{currentPost.likes !== 1 ? 's' : ''}
-            </p>
-
-            <Separator />
 
             <AddCommentForm onSubmit={handleAddComment} isPending={isAddingComment} />
           </div>
