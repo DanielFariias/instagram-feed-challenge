@@ -1,6 +1,6 @@
 # Instagram Feed Challenge 📸
 
-Aplicação de feed de posts estilo Instagram, desenvolvida como desafio técnico para vaga de Frontend Sênior.
+Aplicação de feed de posts estilo Instagram, desenvolvida como desafio técnico para vaga de Frontend.
 
 ## 🚀 Demonstração
 
@@ -154,4 +154,4 @@ Implementado com:
 
 ## 👨‍💻 Autor
 
-Desenvolvido por Daniel Farias como parte do desafio técnico para vaga de Frontend Sênior.
+Desenvolvido por Daniel Farias como parte do desafio técnico para vaga de Frontend.
