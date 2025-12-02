@@ -47,83 +47,36 @@ Aplicação de feed de posts estilo Instagram, desenvolvida como desafio técnic
 
 ### Core
 
-- **React** 19.2.0
-- **TypeScript** 5.9.3
-- **Vite** 5.4+
+- **React**
+- **TypeScript**
+- **Vite**
 
 ### Estilização
 
-- **TailwindCSS** 4.1.17 (com Vite Plugin)
-- **shadcn/ui** - Componentes reutilizáveis
+- **TailwindCSS**
+- **shadcn/ui**
 
 ### Gerenciamento de Estado
 
-- **TanStack Query (React Query)** 5.x - Cache e sincronização de dados
-- **Zustand** 5.0.9 - Estado global da UI
+- **TanStack Query (React Query)**
+- **Zustand**
 
 ### Testes
 
-- **Vitest** 4.0.14
-- **React Testing Library** 16.3.0
-- **@testing-library/jest-dom** 6.9.1
+- **Vitest**
+- **React Testing Library**
+- **@testing-library/jest-dom**
 
 ### Qualidade de Código
 
-- **ESLint** 9.39.1
-- **Prettier** 3.7.3
+- **ESLint**
+- **Prettier**
 - **EditorConfig**
 
 ### Utilitários
 
-- **lucide-react** - Ícones
-- **date-fns** (via utils) - Formatação de datas
-
-## 📂 Estrutura do Projeto
-
-```
-src/
-├── app/                    # Componente principal da aplicação
-│   ├── index.tsx
-│   └── index.spec.tsx
-├── components/             # Componentes React
-│   ├── ui/                # Componentes shadcn/ui
-│   ├── post/              # Componentes relacionados a posts
-│   │   ├── post-card.tsx
-│   │   ├── post-list.tsx
-│   │   ├── post-details-modal.tsx
-│   │   ├── comment-item.tsx
-│   │   └── add-comment-form.tsx
-│   └── theme-toggle.tsx
-├── hooks/                  # Custom hooks
-│   ├── use-posts.ts       # Infinite query para posts
-│   ├── use-like-post.ts   # Mutation de like
-│   ├── use-post-comments.ts
-│   ├── use-add-comment.ts
-│   ├── use-post-tracking.ts
-│   └── use-intersection-observer.ts
-├── services/              # Camada de serviços (API mockada)
-│   ├── feed-service.ts
-│   └── api-simulator.ts
-├── state/                 # Zustand stores
-│   ├── theme.ts
-│   └── tracking.ts
-├── types/                 # Tipos TypeScript
-│   ├── post.ts
-│   ├── user.ts
-│   ├── comment.ts
-│   └── api.ts
-├── utils/                 # Funções utilitárias
-│   └── format-date.ts
-├── mocks/                 # Dados mockados
-│   ├── posts.ts
-│   ├── users.ts
-│   └── comments.ts
-├── tests/                 # Configuração de testes
-│   ├── setup.ts
-│   └── test-utils.tsx
-└── styles/
-    └── global.css
-```
+- **lucide-react**
+- **date-fns**
 
 ## 🚀 Como Rodar o Projeto
 
@@ -136,7 +89,7 @@ src/
 
 ```bash
 # Clone o repositório
-git clone <seu-repositorio>
+git clone https://github.com/DanielFariias/instagram-feed-challenge.git
 cd instagram-feed-challenge
 
 # Instale as dependências
@@ -153,15 +106,6 @@ O projeto estará disponível em `http://localhost:5173`
 ```bash
 # Executar todos os testes
 npm run test
-
-# Executar testes em modo watch
-npm run test:watch
-
-# Executar testes com UI
-npm run test:ui
-
-# Gerar coverage
-npm run test:coverage
 ```
 
 ## 🏗️ Decisões Técnicas
@@ -208,32 +152,6 @@ Implementado com:
 - **localStorage** para persistência
 - Timer automático que inicia/para conforme scroll
 
-## 🎨 Features de UX
-
-- ✨ Animações suaves em transições
-- 🌓 Dark mode automático baseado em preferência do sistema
-- ⚡ Feedback imediato em ações (optimistic updates)
-- 💬 Comentários atualizados em tempo real
-- 📱 Layout responsivo
-- ♿ Suporte a teclado (Enter para enviar comentário)
-
-## 🔮 Possíveis Melhorias Futuras
-
-- [ ] Filtros de posts (por usuário, data, etc)
-- [ ] Ordenação de posts
-- [ ] Busca de posts
-- [ ] Virtualização de lista para performance (react-window)
-- [ ] PWA (offline support)
-- [ ] Compartilhamento de posts
-- [ ] Notificações
-- [ ] Upload de imagens
-- [ ] Edição de comentários
-- [ ] Sistema de replies em comentários
-
-## 📄 Licença
-
-MIT
-
 ## 👨‍💻 Autor
 
-Desenvolvido como parte do desafio técnico para vaga de Frontend Sênior.
+Desenvolvido por Daniel Farias como parte do desafio técnico para vaga de Frontend Sênior.
