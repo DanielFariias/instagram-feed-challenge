@@ -26,7 +26,7 @@ Aplicação de feed de posts estilo Instagram, desenvolvida como desafio técnic
 
 ### ✅ Requisitos Técnicos
 
-- [x] React 18 com TypeScript
+- [x] React com TypeScript
 - [x] Arquitetura limpa (componentes de apresentação separados da lógica)
 - [x] Testes unitários (Vitest + React Testing Library)
 - [x] Gerenciamento de estado (Zustand para UI, React Query para dados)
