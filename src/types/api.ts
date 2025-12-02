@@ -1,5 +1,6 @@
 export interface LikePostRequest {
   postId: string
+  username?: string
 }
 
 export interface AddCommentRequest {
@@ -12,4 +13,5 @@ export interface AddCommentRequest {
 export interface GetPostsRequest {
   page?: number
   pageSize?: number
+  username?: string
 }

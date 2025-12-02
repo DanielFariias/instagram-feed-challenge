@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { getPosts } from '@/services/feed-service'
+import { useAuth } from '@/state/auth'
 
 interface UsePostsOptions {
   pageSize?: number
@@ -7,13 +8,15 @@ interface UsePostsOptions {
 
 export function usePosts(options: UsePostsOptions = {}) {
   const { pageSize = 10 } = options
+  const { user } = useAuth()
 
   return useInfiniteQuery({
-    queryKey: ['posts', { pageSize }],
+    queryKey: ['posts', { pageSize, username: user?.username }],
     queryFn: ({ pageParam = 1 }) =>
       getPosts({
         page: pageParam,
         pageSize,
+        username: user?.username,
       }),
     initialPageParam: 1,
     getNextPageParam: lastPage => {

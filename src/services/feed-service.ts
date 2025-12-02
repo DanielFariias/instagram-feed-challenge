@@ -6,6 +6,7 @@ import {
 import { mockPosts } from '@/mocks/posts'
 import { getRandomUser } from '@/mocks/users'
 import { generateMockComments } from '@/mocks/comments'
+import { isPostLikedByUser } from '@/utils/likes-storage'
 
 import type { Post } from '@/types/post'
 import type { Comment } from '@/types/comment'
@@ -15,7 +16,7 @@ import type { AddCommentRequest, GetPostsRequest, LikePostRequest } from '@/type
 let postsDatabase = [...mockPosts]
 
 export async function getPosts(request: GetPostsRequest = {}): Promise<PaginatedResponse<Post>> {
-  const { page = 1, pageSize = 10 } = request
+  const { page = 1, pageSize = 10, username } = request
 
   await simulateDelay(800)
 
@@ -27,8 +28,14 @@ export async function getPosts(request: GetPostsRequest = {}): Promise<Paginated
   const endIndex = startIndex + pageSize
   const paginatedData = postsDatabase.slice(startIndex, endIndex)
 
+  // Map posts with user-specific like state
+  const postsWithUserLikes = paginatedData.map(post => ({
+    ...post,
+    isLiked: username ? isPostLikedByUser(username, post.id) : false,
+  }))
+
   return {
-    data: paginatedData,
+    data: postsWithUserLikes,
     page,
     pageSize,
     total: postsDatabase.length,
@@ -48,7 +55,7 @@ export async function getPostById(postId: string): Promise<Post | null> {
 }
 
 export async function toggleLikePost(request: LikePostRequest): Promise<Post> {
-  const { postId } = request
+  const { postId, username } = request
 
   await simulateDelay(300)
 
@@ -63,11 +70,13 @@ export async function toggleLikePost(request: LikePostRequest): Promise<Post> {
   }
 
   const post = postsDatabase[postIndex]
+  const wasLiked = username ? isPostLikedByUser(username, post.id) : false
 
+  // Update global like count based on user action
   const updatedPost = {
     ...post,
-    isLiked: !post.isLiked,
-    likes: post.isLiked ? post.likes - 1 : post.likes + 1,
+    isLiked: !wasLiked,
+    likes: wasLiked ? post.likes - 1 : post.likes + 1,
   }
 
   postsDatabase[postIndex] = updatedPost

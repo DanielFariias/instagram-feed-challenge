@@ -11,7 +11,10 @@ export function useLikePost() {
 
   return useMutation({
     mutationFn: (request: { postId: string }) => {
-      return toggleLikePost(request)
+      return toggleLikePost({
+        ...request,
+        username: user?.username,
+      })
     },
 
     onMutate: async ({ postId }) => {
